@@ -1,12 +1,13 @@
-# Core data analysis
+# Core analytics
 pandas
 numpy
-
-# Visualisation
 matplotlib
 
-# SQL / database
+# SQL / data access
 SQLAlchemy
 
 # Notebook environment
 jupyter
+
+# Excel support
+openpyxl
