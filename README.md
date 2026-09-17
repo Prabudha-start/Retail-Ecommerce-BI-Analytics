@@ -1,292 +1,290 @@
-# # Retail E-Commerce Business Intelligence Platform
-End-to-end analytics project turning raw Brazilian e-commerce data into executive dashboards and business decisions using Python, SQL, and Power BI.
+# Retail E-Commerce BI Analytics
+### From transactions to decisions.
 
-![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python)
+> **A store does not have a dashboard problem. It has a decision problem.**
 
-![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-blue)
+This project started with a simple question:
 
-![SQLite](https://img.shields.io/badge/SQL-SQLite-green)
+**What can a retail business actually learn when revenue, customers, products, payments, and delivery are treated as one connected story?**
 
-![PowerBI](https://img.shields.io/badge/PowerBI-Dashboard-yellow?logo=powerbi)
+Rather than building another dashboard that begins and ends with KPI cards, I built an end-to-end Business Intelligence workflow around the questions a business would actually ask.
 
-An end-to-end Business Intelligence portfolio project that transforms raw Brazilian e-commerce data into executive-ready dashboards and actionable business insights using Python, SQL, and Power BI.
-
-## Table of Contents
-
-- Business Objective
-- Tech Stack
-- Skills Demonstrated
-- Project Workflow
-- Dataset
-- Executive Dashboard
-- Customer & Delivery Dashboard
-- Business Questions Answered
-- Business Impact
-- Key Business Insights
-- Repository Structure
-- Future Improvements
-- Author
+The result is a practical retail analytics project using **Python, SQL, and Power BI** to move from raw e-commerce transactions to evidence, insights, and business decisions.
 
 ---
 
-# Business Objective
+## Why I Built This
 
-The objective of this project is to help business leaders understand:
+I come from a writing and content background, so I care a lot about something that is easy to overlook in analytics: **how a finding is communicated**.
 
-- Revenue performance
-- Customer purchasing behavior
-- Delivery efficiency
-- Product category performance
-- Payment trends
-- Customer satisfaction
+For me, a good dashboard is not a wall of charts. It is a clear conversation between the data and the person who has to make a decision from it.
 
-The project demonstrates the complete analytics workflow from raw data to an executive-level business intelligence dashboard.
+That idea shaped this project from the beginning.
 
 ---
 
-# Tech Stack
+## The Business Lenses
 
-- Python
-- Pandas
-- NumPy
-- SQL (SQLite)
-- Power BI
-- Git
-- GitHub
-- VS Code
-- Jupyter Notebook
-
----
-## How to Run This
-
-1. Clone the repository
-   git clone https://github.com/Prabudha-start/Retail-Pricing-Intelligence.git
-   cd Retail-Pricing-Intelligence
-
-2. Install dependencies
-   pip install -r requirements.txt
-
-3. Run the data cleaning and EDA notebooks in order (in notebooks/)
-
-4. Load the cleaned data into the SQL database
-   python sql/build_database.py
-   (adjust this to whatever your actual script is called)
-
-5. Open the Power BI file in dashboard/ to explore the dashboards, or view the exported screenshots in images/
+| Lens | What I wanted to understand |
+|---|---|
+| **Revenue** | Where is the business making money, and how is it changing? |
+| **Products** | Which categories contribute most to sales? |
+| **Customers** | What does purchasing behaviour tell us about the customer base? |
+| **Delivery** | Where does the customer experience break down operationally? |
+| **Payments** | How do customers pay, and where is revenue concentrated? |
+| **Decisions** | What deserves attention once all these signals are viewed together? |
 
 ---
 
-# Skills Demonstrated
-
-- Data Cleaning
-- Feature Engineering
-- Exploratory Data Analysis (EDA)
-- SQL Querying
-- KPI Development
-- Data Visualization
-- Dashboard Design
-- Business Intelligence
-- Business Storytelling
-
----
-
-## Highlights
-
-✔ Built end-to-end BI pipeline
-
-✔ Cleaned 100K+ records
-
-✔ Designed SQL database
-
-✔ Developed 25+ KPIs
-
-✔ Built two interactive Power BI dashboards
-
-✔ Produced executive recommendations
-
----
-
-# Project Workflow
+## Analytical Journey
 
 ```text
-Raw Data
-    │
-    ▼
-Data Cleaning & Feature Engineering (Python)
-    │
-    ▼
-Exploratory Data Analysis (Python)
-    │
-    ▼
-SQL Database Creation
-    │
-    ▼
-Business KPI Development
-    │
-    ▼
-Power BI Dashboard
-    │
-    ▼
-Business Insights & Recommendations
+Raw Olist data
+      ↓
+Understand the data
+      ↓
+Clean + validate + engineer features
+      ↓
+Explore patterns in Python
+      ↓
+Build a SQL analysis layer
+      ↓
+Translate metrics into business questions
+      ↓
+Build the Power BI experience
+      ↓
+Turn evidence into decisions
 ```
+
+---
+
+## What the Analysis Reveals
+
+A few signals stood out during the analysis:
+
+- **~20.58M revenue** across approximately **99K orders**
+- **~77% of revenue** came through credit-card payments
+- Average customer review score was approximately **4.02 / 5**
+- Approximately **6.34% of deliveries were late**
+- Average delivery time was approximately **12 days**
+- **Home & Furniture** and **Health & Beauty** were among the strongest revenue categories
+
+These numbers are not the conclusion. They are the starting point for asking better questions.
+
+---
+
+# The Dashboard
+
+## 01 — Executive Sales Overview
+
+The executive view focuses on the commercial heartbeat of the business: revenue, orders, customers, category contribution, payment mix, and movement over time.
+
+![Executive Sales Overview](images/Executive_Sales_Overview.png)
+
+### Questions behind the page
+
+- Is revenue growing or slowing?
+- Which categories are carrying the business?
+- How concentrated is revenue across payment methods?
+- Where should an executive look next?
+
+---
+
+## 02 — Customer & Delivery Experience
+
+The second view connects operational performance with the customer experience. Delivery time, late deliveries, ratings, freight costs, geography, and order status are considered together rather than in isolation.
+
+![Customer and Delivery Analysis](images/Customer_and_delivery_analysis.png)
+
+### Questions behind the page
+
+- Where are deliveries taking longer?
+- Which regions show higher delay rates?
+- What does the delivery experience look like alongside customer ratings?
+- Where might logistics performance deserve deeper investigation?
+
+---
+
+# Business Questions Explored
+
+### Commercial
+- Which product categories generate the highest revenue?
+- How does revenue change over time?
+- Where is revenue concentrated?
+
+### Customer
+- How do customers purchase?
+- What does the review data tell us about customer experience?
+- Are operational issues visible in customer outcomes?
+
+### Operations
+- What percentage of orders are delivered late?
+- Which states experience longer delivery times?
+- Which categories carry higher freight costs?
+
+### Payments
+- Which payment methods contribute most to revenue?
+- How concentrated is payment behaviour?
+
+---
+
+# A Note on Interpretation
+
+The dashboard deliberately separates **what the data shows** from **what a business might choose to do about it**.
+
+For example, a high share of credit-card revenue is a useful observation. It is not, by itself, proof that a new payment incentive would improve profitability.
+
+Likewise, a late-delivery rate is a signal worth investigating, not an explanation of why delays happen.
+
+That distinction matters. Good analytics should make the next question clearer, not pretend every chart contains the answer.
+
+---
+
+# Technical Work
+
+### Python
+- Data understanding
+- Data cleaning
+- Feature engineering
+- Exploratory Data Analysis
+- Statistical summaries
+- Visual exploration
+
+### SQL
+- Relational data modelling
+- Business queries
+- Aggregations and grouping
+- Delivery-performance analysis
+- Time-based analysis
+
+### Power BI
+- KPI design
+- Executive dashboarding
+- Interactive filtering
+- Business-focused visualisation
+- Narrative dashboard structure
+
+### Tools
+`Python` · `Pandas` · `NumPy` · `SQLite` · `SQLAlchemy` · `Matplotlib` · `Jupyter` · `Power BI` · `Git` · `GitHub`
+
+---
+
+# Notebook Journey
+
+| Notebook | Purpose |
+|---|---|
+| `01_data_understanding.ipynb` | Understand the source data, structure, fields, and relationships |
+| `02_data_cleaning_feature_engineering.ipynb` | Clean the data and create analysis-ready features |
+| `03_exploratory_data_analysis.ipynb` | Explore revenue, customers, products, payments, delivery, and ratings |
+| `04_sql_database_setup.ipynb` | Build the SQL analysis layer and prepare relational analysis |
+| `00_environment_check.ipynb` | Verify the working environment and dependencies |
+
+The notebooks are intentionally kept as a visible trail from **raw data → reasoning → analysis**.
 
 ---
 
 # Dataset
 
-**Source**
+**Brazilian E-Commerce Public Dataset by Olist**
 
-Brazilian E-Commerce Public Dataset by Olist
+The dataset contains approximately 100K orders from Brazilian e-commerce, with information spanning customers, orders, products, payments, reviews, sellers, and logistics.
 
-**Dataset Size**
-
-- Approximately 99,000 Orders
-- Approximately 96,000 Customers
-- Over 100,000 Order Items
-
----
-
-# Executive Dashboard
-
-Designed for executives to monitor business performance through:
-
-- Revenue KPIs
-- Customer Metrics
-- Revenue Trends
-- Product Category Analysis
-- Payment Method Analysis
-- Executive Business Insights
-
-
-## Executive Dashboard
-
-![Executive Dashboard](images/Executive_Sales_Overview.png)
-
----
-
-# Customer & Delivery Dashboard
-
-Focused on customer experience and logistics performance through:
-
-- Average Delivery Time
-- Late Delivery Rate
-- Customer Satisfaction
-- Freight Cost Analysis
-- Regional Delivery Performance
-- Order Status Analysis
-
-### Customer & Delivery Dashboard
-
-![Customer & Delivery Dashboard](images/Customer_and_delivery_analysis.png)
-
----
-
-# Business Questions Answered
-
-- Which product categories generate the highest revenue?
-- Which payment methods contribute the most revenue?
-- How has revenue changed over time?
-- Which states experience longer delivery times?
-- What percentage of deliveries are delayed?
-- How do delivery delays affect customer satisfaction?
-- Which product categories incur the highest freight costs?
-
----
-
-## Business Impact
-
-- Revenue concentration in Home & Furniture and Health & Beauty signals where marketing and inventory investment would have the highest return
-- A 6.34% late-delivery rate, concentrated in specific states, points to where logistics or carrier renegotiation would have the most impact
-- 77% of revenue running through credit cards suggests payment-method incentives (installments, cashback) could be tested to shift lower-margin payment types
-- Average 12-day delivery time is a clear benchmark for a logistics improvement target
-
----
-
-# Key Business Insights
-
-- Revenue exceeded **20.58M** across approximately **99K orders**.
-- Credit Cards generated approximately **77%** of total revenue.
-- Average customer rating remained high at **4.02 / 5**.
-- Only **6.34%** of deliveries were delayed.
-- Average delivery time was approximately **12 days**.
-- Home & Furniture and Health & Beauty generated the highest revenue.
+This project uses the dataset for portfolio and analytical learning purposes.
 
 ---
 
 # Repository Structure
 
 ```text
-Retail-Pricing-Intelligence/
+Retail-Ecommerce-BI-Analytics/
 │
 ├── data/
 │   ├── raw/
 │   └── cleaned/
 │
 ├── notebooks/
-│
-├── sql/
+│   ├── 00_environment_check.ipynb
+│   ├── 01_data_understanding.ipynb
+│   ├── 02_data_cleaning_feature_engineering.ipynb
+│   ├── 03_exploratory_data_analysis.ipynb
+│   └── 04_sql_database_setup.ipynb
 │
 ├── dashboard/
+│   └── Revenue Pricing Intelligence.pbix
 │
-├── reports/
+├── docs/
+│   └── project_summary.md
 │
 ├── images/
-│
-├── simulator/
+│   ├── Executive_Sales_Overview.png
+│   └── Customer_and_delivery_analysis.png
 │
 ├── README.md
-│
 └── requirements.txt
 ```
 
 ---
 
-## Sample Queries
+# How to Explore the Project
 
-**Revenue by product category**
-SELECT category, SUM(price) AS total_revenue
-FROM order_items
-JOIN products USING (product_id)
-GROUP BY category
-ORDER BY total_revenue DESC;
+### 1. Clone the repository
 
-**Late delivery rate by state**
-SELECT customer_state,
-       ROUND(100.0 * SUM(CASE WHEN delivered_date > estimated_date THEN 1 ELSE 0 END) / COUNT(*), 2) AS late_pct
-FROM orders
-GROUP BY customer_state
-ORDER BY late_pct DESC;
+```bash
+git clone https://github.com/Prabudha-start/Retail-Ecommerce-BI-Analytics.git
+cd Retail-Ecommerce-BI-Analytics
+```
 
-**Average delivery time trend**
-SELECT strftime('%Y-%m', order_date) AS month,
-       AVG(julianday(delivered_date) - julianday(order_date)) AS avg_delivery_days
-FROM orders
-GROUP BY month
-ORDER BY month;
+### 2. Install dependencies
 
----
+```bash
+pip install -r requirements.txt
+```
 
-# Future Improvements
+### 3. Follow the notebooks
 
-- Dynamic Pricing Simulator
-- Profitability Dashboard
-- Customer Segmentation
-- Predictive Sales Forecasting
-- Inventory Optimization
+Start with the environment check, then move through data understanding, cleaning and feature engineering, EDA, and SQL setup.
+
+### 4. Explore Power BI
+
+Open the `.pbix` file in `dashboard/` using Power BI Desktop, or use the exported dashboard images above for a quick view.
 
 ---
 
+# What I Would Build Next
+
+This project creates a strong foundation for deeper retail intelligence. Natural next steps include:
+
+- Customer segmentation and cohort analysis
+- Profitability and margin analysis
+- Sales forecasting
+- Inventory optimisation
+- Supplier and seller performance
+- A pricing scenario simulator
+
+The goal would be to move from **descriptive BI** toward **diagnostic and decision-support analytics**.
+
 ---
 
-# Author
+# One Last Thought
 
-**Prabudha Darabare**
+The interesting part of analytics is rarely finding a number.
 
-Data Analytics | Business Intelligence | Prompt Engineering
+It is figuring out **why that number deserves attention**.
 
-- **LinkedIn:** [https://linkedin.com/in/prabudha-darabare](https://linkedin.com/in/prabudha-darabare)
-- **GitHub:** https://github.com/Prabudha-start/Retail-Pricing-Intelligence
+That is the standard I tried to build into this project.
 
 ---
 
-*Thank you for exploring this project. Feedback, suggestions, and collaborations are always welcome.*
+## About Me
+
+**Prabudha Darabare**  
+Data Analytics · Business Intelligence · AI & Prompt Engineering
+
+I am transitioning from a senior content and communications background into data analytics, bringing together analytical thinking, business storytelling, and AI-assisted workflows.
+
+- **LinkedIn:** [prabudha-darabare](https://linkedin.com/in/prabudha-darabare)
+- **GitHub:** [Prabudha-start](https://github.com/Prabudha-start)
+
+---
+
+*Built with curiosity, SQL, Python, Power BI, and an unreasonable number of questions about what the data is trying to say.*
