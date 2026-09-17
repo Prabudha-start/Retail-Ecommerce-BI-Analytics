@@ -1,58 +1,95 @@
 # Analytical Audit
 
-## Why this document exists
+## Purpose
 
-A polished dashboard is only useful if its numbers survive scrutiny. This audit records the main grain and metric risks identified during the repository review before the Power BI report is treated as portfolio-final.
+A polished dashboard is only useful if its numbers survive scrutiny. This audit records the data-quality, grain, reconciliation, and interpretation risks identified during the repository review.
 
-## 1. The master table is not an order-level table
+The corrective SQL model is now available at `sql/analytical_model.sql`.
 
-The current master dataset contains **119,143 rows**, while the source orders table contains **99,441 orders**.
+## 1. Grain risk: corrected
 
-That difference is expected from the relational structure: an order can have multiple items and multiple payment records. The merged dataset therefore behaves as a mixed-grain analytical table rather than one row per order.
+The source contains multiple relational grains:
 
-**Rule:** use `COUNT(DISTINCT order_id)` for order counts. Never use row count as order count.
+- `orders` → one row per order
+- `order_items` → one row per item within an order
+- `order_payments` → one row per payment record
+- `order_reviews` → review-level records
+- `customers` → customer/order-address records
+- `products` → product-level attributes
 
-## 2. Payment values require special care
+The previous merged dataset contained **119,143 rows** versus **99,441 source orders**. That expansion is expected from one-to-many relationships, but it makes the merged table unsafe as a universal KPI source.
 
-The current SQL notebook calculates revenue using `SUM(payment_value)` over the merged `olist_master` table.
+**Correction:** the new analytical model aggregates item, payment, and review tables to the required grain before joining them to the order-level base.
 
-Because payment records are joined to order-item records, an order with multiple items can repeat the same payment value across multiple rows. That can inflate payment-based revenue, payment mix, customer value, and related metrics if they are aggregated directly from the merged table.
+## 2. Payment-value inflation: corrected
 
-**Portfolio standard:** payment metrics should be calculated from an order-level payment aggregation before being joined to item-level analysis, or directly from the original payment table.
+Payment records were previously joined to order-item records. If an order had multiple items, its payment value could therefore appear on multiple rows.
 
-## 3. Product/category analysis should use item-level value
+A direct `SUM(payment_value)` over that mixed-grain table could inflate payment-based revenue and payment mix.
 
-`price` and `freight_value` originate at order-item level. They are appropriate for product and category analysis when aggregated at that grain.
+**Correction:** `v_order_payments` aggregates payments to one row per order, while `v_payment_mix` calculates payment-method composition directly from the payment table.
 
-For category revenue, aggregate item-level merchandise value rather than repeating order-level payment totals across items.
+## 3. Category revenue: corrected
 
-## 4. Customer value should be calculated at customer/order grain
+`price` and `freight_value` originate at order-item level. Category analysis should therefore use item-level merchandise value.
 
-Customer lifetime value and average order value should be calculated after establishing one value per order, then grouped by `customer_unique_id`.
+**Correction:** the category query in `sql/analytical_model.sql` aggregates `order_items.price` by product category rather than allocating order-level payment totals across products.
 
-This avoids multiplying customer value when an order contains multiple items or payment records.
+## 4. AOV and customer metrics: corrected
 
-## 5. Delivery metrics have an appropriate order-level denominator
+Average Order Value must use distinct orders and an order-level value. Customer value should likewise be calculated after establishing one value per order.
 
-Delivery time and late-delivery status describe an order experience. They should therefore be evaluated using distinct delivered orders with the required delivery timestamps.
+**Correction:** the analytical model provides one row per order in `v_order_analytics`, making distinct-order denominators explicit.
 
-The current SQL output shows 96,478 delivered orders and 6,535 late orders, with the late/on-time classification based on `delivery_delay > 0`.
+## 5. Delivery metrics: corrected
 
-## 6. Current portfolio numbers should be reconciled before final publication
+Delivery duration and lateness are order-level concepts.
 
-The repository currently contains headline figures such as approximately 20.58M revenue and a 6.34% late-delivery rate. The SQL notebook contains related calculations using the merged master table, including 20,579,664.01 from `SUM(payment_value)` and 6,535 delayed orders.
+**Correction:** delivery days and late-delivery classification are calculated from the order table, with eligible delivered orders used as the denominator. Missing delivery timestamps are not silently treated as zero days.
 
-These figures should not be treated as final portfolio KPIs until the underlying grain is reconciled and the same definitions are used across Python, SQL, and Power BI.
+## 6. Data-quality checks added
 
-This is intentionally documented rather than hidden. A strong analytics portfolio should show that metric governance is part of the work.
+The SQL model now includes checks for:
 
-## Recommended analytical model
+- Duplicate order IDs
+- Duplicate customer IDs
+- Duplicate product IDs
+- Negative item prices
+- Negative freight values
+- Invalid review scores outside 1–5
+- Negative payment values
+- Delivery before purchase
+- Approval before purchase
+- Carrier handoff before purchase
+- Analytical row-count / distinct-order reconciliation
+
+These checks are designed to distinguish genuine anomalies from expected characteristics of the source data.
+
+## 7. Historical KPI reconciliation
+
+The earlier portfolio headline figures included approximately **20.58M revenue** and **6.34% late deliveries**. Those figures must now be recalculated against the corrected analytical model before they are treated as final dashboard KPIs.
+
+Until that reconciliation is executed against the raw source files, those earlier figures should be regarded as **provisional**, not authoritative.
+
+## 8. Expected versus suspicious behaviour
+
+Not every unusual record is a data error. For example:
+
+- Multiple payment rows for one order are expected.
+- Multiple item rows for one order are expected.
+- Missing reviews are expected because not every order has a review.
+- Missing delivery dates can be legitimate for orders that were not delivered.
+- Multiple reviews for an order require aggregation rather than automatic deletion.
+
+The audit therefore avoids blanket deduplication. Records should only be removed when there is evidence that they violate the intended business grain or represent invalid values.
+
+## 9. Recommended analytical architecture
 
 ```text
-                 ┌── Customers
-                 │
-Orders ──────────┼── Delivery / Status
-   │             │
+                    ┌── Customers
+                    │
+Orders ─────────────┼── Delivery / Status
+   │                │
    ├── Order-level Payments
    │
    ├── Order-level Reviews
@@ -65,12 +102,12 @@ Payment grain     → payment mix, payment value, installments
 Review grain      → review score and experience analysis
 ```
 
-## Final QA rule
+## 10. Final KPI QA rule
 
 Before a KPI reaches the executive dashboard, answer three questions:
 
 1. **What is the grain?**
 2. **What is the denominator?**
-3. **Can a one-to-many join duplicate the value being aggregated?**
+3. **Can a one-to-many relationship duplicate the value being aggregated?**
 
 If any answer is unclear, the KPI is not ready for publication.
