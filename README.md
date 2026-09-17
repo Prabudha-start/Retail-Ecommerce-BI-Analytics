@@ -1,4 +1,5 @@
-# Retail Analytics & Business Intelligence Platform
+# # Retail E-Commerce Business Intelligence Platform
+End-to-end analytics project turning raw Brazilian e-commerce data into executive dashboards and business decisions using Python, SQL, and Power BI.
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python)
 
@@ -54,6 +55,24 @@ The project demonstrates the complete analytics workflow from raw data to an exe
 - GitHub
 - VS Code
 - Jupyter Notebook
+
+---
+## How to Run This
+
+1. Clone the repository
+   git clone https://github.com/Prabudha-start/Retail-Pricing-Intelligence.git
+   cd Retail-Pricing-Intelligence
+
+2. Install dependencies
+   pip install -r requirements.txt
+
+3. Run the data cleaning and EDA notebooks in order (in notebooks/)
+
+4. Load the cleaned data into the SQL database
+   python sql/build_database.py
+   (adjust this to whatever your actual script is called)
+
+5. Open the Power BI file in dashboard/ to explore the dashboards, or view the exported screenshots in images/
 
 ---
 
@@ -174,16 +193,12 @@ Focused on customer experience and logistics performance through:
 
 ---
 
-# Business Impact
+## Business Impact
 
-This dashboard enables decision-makers to:
-
-- Monitor revenue performance
-- Track customer satisfaction
-- Identify delivery bottlenecks
-- Compare product category performance
-- Analyze payment behavior
-- Support data-driven pricing and operational decisions
+- Revenue concentration in Home & Furniture and Health & Beauty signals where marketing and inventory investment would have the highest return
+- A 6.34% late-delivery rate, concentrated in specific states, points to where logistics or carrier renegotiation would have the most impact
+- 77% of revenue running through credit cards suggests payment-method incentives (installments, cashback) could be tested to shift lower-margin payment types
+- Average 12-day delivery time is a clear benchmark for a logistics improvement target
 
 ---
 
@@ -223,6 +238,31 @@ Retail-Pricing-Intelligence/
 │
 └── requirements.txt
 ```
+
+---
+
+## Sample Queries
+
+**Revenue by product category**
+SELECT category, SUM(price) AS total_revenue
+FROM order_items
+JOIN products USING (product_id)
+GROUP BY category
+ORDER BY total_revenue DESC;
+
+**Late delivery rate by state**
+SELECT customer_state,
+       ROUND(100.0 * SUM(CASE WHEN delivered_date > estimated_date THEN 1 ELSE 0 END) / COUNT(*), 2) AS late_pct
+FROM orders
+GROUP BY customer_state
+ORDER BY late_pct DESC;
+
+**Average delivery time trend**
+SELECT strftime('%Y-%m', order_date) AS month,
+       AVG(julianday(delivered_date) - julianday(order_date)) AS avg_delivery_days
+FROM orders
+GROUP BY month
+ORDER BY month;
 
 ---
 
