@@ -111,3 +111,88 @@ Before a KPI reaches the executive dashboard, answer three questions:
 3. **Can a one-to-many relationship duplicate the value being aggregated?**
 
 If any answer is unclear, the KPI is not ready for publication.
+
+
+## 11. Confirmed audit findings from raw source execution
+
+The local audit notebook was executed against the raw Olist files. The following findings are now confirmed:
+
+### Structural integrity
+
+- 99,441 source orders
+- 119,143 rows after the deliberately broad diagnostic join
+- 99,441 distinct orders remain after that join
+- Row multiplication factor: **1.198x**
+- Duplicate order, customer, and product keys: **0**
+- Referential-integrity orphan counts tested: **0**
+
+The 1.198x expansion is therefore a **grain/model issue**, not evidence of duplicated orders.
+
+### Value-domain checks
+
+The tested invalid-value counts were:
+
+- Negative item prices: **0**
+- Zero item prices: **0**
+- Negative freight values: **0**
+- Negative payment values: **0**
+- Invalid review scores: **0**
+- Negative payment installments: **0**
+- Zero-value payment records: **9**
+
+The nine zero-value payment records should be retained unless a downstream business definition explicitly excludes them.
+
+### Timestamp quality
+
+The audit identified:
+
+- **166** orders where carrier handoff is timestamped before purchase
+- **23** orders where customer delivery is timestamped before carrier handoff
+- **0** approval-before-purchase cases
+- **0** delivery-before-purchase cases
+
+The 189 timestamp-anomaly records should not be overwritten or "corrected" in the raw data. Instead, analytical logic should preserve the source timestamps and expose a quality flag when operational sequence validity matters.
+
+### Payment reconciliation
+
+Across **99,441 orders** checked:
+
+- **260** differed from item value + freight by more than R$0.05
+- **249** differed by more than R$1
+- **98** differed by more than R$10
+- Maximum absolute difference: **R$182.81**
+
+The 98 orders with differences above R$10 were overwhelmingly card payments: **96 credit-card and 2 debit-card orders**.
+
+A further check showed that all 98 had exactly **one payment record** and payment sequence **1**. Therefore, the discrepancy is **not caused by multiple payment rows being joined together**.
+
+These payment values should **not** be altered to force reconciliation with item price + freight. Payment value and merchandise/item value remain separate measures with separate semantics. The analytical model therefore keeps payment values at payment/order grain and merchandise revenue at item/order grain.
+
+### Delivery distribution
+
+For orders with both purchase and customer-delivery timestamps:
+
+- Count: **96,476**
+- Mean delivery duration: **12.56 days**
+- Median: **10.22 days**
+- 95th percentile: **29.28 days**
+- 99th percentile: **46.05 days**
+- Maximum: **209.63 days**
+
+The long tail is retained rather than arbitrarily clipped. Extreme durations should be investigated contextually when used for operational decisions.
+
+## 12. Final data-quality decisions
+
+| Finding | Decision |
+|---|---|
+| One-to-many join expansion | Correct through grain-safe analytical model |
+| Duplicate primary keys | No action |
+| Orphan foreign keys | No action |
+| Missing review text | Retain as source characteristic |
+| Missing delivery timestamps | Retain; use metric-specific eligibility rules |
+| Invalid monetary values | None found in tested domains |
+| Timestamp sequence anomalies | Preserve source; flag for affected operational analyses |
+| Payment/item reconciliation differences | Preserve both measures; do not force equality |
+| Extreme delivery durations | Retain; investigate contextually |
+
+The raw source data is therefore **not being rewritten to manufacture cleaner numbers**. Corrections belong in the analytical layer and metric definitions.
