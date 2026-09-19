@@ -60,16 +60,20 @@ Turn evidence into decisions
 
 ## What the Analysis Reveals
 
-A few signals stood out during the analysis:
+The first exploratory pass surfaced useful business signals, but the data-quality audit showed that some headline measures were sensitive to mixed-grain joins.
 
-- **~20.58M revenue** across approximately **99K orders**
-- **~77% of revenue** came through credit-card payments
-- Average customer review score was approximately **4.02 / 5**
-- Approximately **6.34% of deliveries were late**
-- Average delivery time was approximately **12 days**
-- **Home & Furniture** and **Health & Beauty** were among the strongest revenue categories
+The project therefore distinguishes between:
 
-These numbers are not the conclusion. They are the starting point for asking better questions.
+- **Merchandise revenue** — calculated from order-item price at item/order grain
+- **Payment value** — calculated from payment records at payment/order grain
+- **Orders** — distinct `order_id`
+- **Delivery metrics** — calculated from eligible order-level timestamps
+
+The earlier exploratory figures of approximately **20.58M revenue** and **6.34% late deliveries are now treated as provisional** until the Power BI model is reconciled against the corrected analytical layer.
+
+The audit also identified **189 source timestamp-sequence anomalies** and **98 orders with payment/item reconciliation differences above R$10**. These records are preserved rather than altered; the analytical model separates the affected measures rather than forcing them to reconcile.
+
+The result is a more defensible foundation for the dashboard: the project does not manufacture cleaner KPIs by overwriting source data.
 
 ---
 
@@ -173,13 +177,14 @@ That distinction matters. Good analytics should make the next question clearer, 
 
 | Notebook | Purpose |
 |---|---|
+| `00_environment_check.ipynb` | Verify the working environment and dependencies |
 | `01_data_understanding.ipynb` | Understand the source data, structure, fields, and relationships |
 | `02_data_cleaning_feature_engineering.ipynb` | Clean the data and create analysis-ready features |
 | `03_exploratory_data_analysis.ipynb` | Explore revenue, customers, products, payments, delivery, and ratings |
 | `04_sql_database_setup.ipynb` | Build the SQL analysis layer and prepare relational analysis |
-| `00_environment_check.ipynb` | Verify the working environment and dependencies |
+| `05_data_quality_audit.ipynb` | Test grain, integrity, missingness, value domains, timestamps, reconciliation, and join multiplication |
 
-The notebooks are intentionally kept as a visible trail from **raw data → reasoning → analysis**.
+The notebooks are intentionally kept as a visible trail from **raw data → validation → reasoning → analysis**.
 
 ---
 
